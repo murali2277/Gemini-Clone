@@ -9,6 +9,10 @@ const Main = () => {
   const [loading, setLoading] = useState(false);
   const [prevPrompt, setPrevPrompt] = useState(""); // New state for submitted prompt
 
+  const delayPara = (index,nextWord) => {
+    
+  }
+
   const handleSubmit = async () => {
     if (!input.trim()) return;
 
@@ -20,7 +24,9 @@ const Main = () => {
         model: "gemini-2.5-flash",
         contents: input,
       });
-      setResponse(result.text);
+      const formattedText = formatResponse(result.text); // Format the response
+      console.log("Formatted Response:", formattedText); // Log the formatted response
+      setResponse(formattedText);
     } catch (error) {
       console.error("Error calling Gemini API:", error);
       setResponse("Failed to get response from Gemini API.");
@@ -37,26 +43,7 @@ const Main = () => {
         <img src={assets.user_icon} alt="" />
       </div>
       <div className="main-container">
-        {response ? (
-          <div className="result">
-            <div className="result-title">
-              <img src={assets.user_icon} alt="" />
-              <p>{prevPrompt}</p> {/* Display the stored previous prompt */}
-            </div>
-            <div className="result-data">
-              <img src={assets.gemini_icon} alt="" />
-              {loading ? (
-                <div className="loader">
-                  <hr />
-                  <hr />
-                  <hr />
-                </div>
-              ) : (
-                <p>{response}</p>
-              )}
-            </div>
-          </div>
-        ) : (
+        {!prevPrompt ? ( // Show greet and cards only if no prompt has been submitted yet
           <>
             <div className="greet">
               <p>
@@ -83,6 +70,25 @@ const Main = () => {
               </div>
             </div>
           </>
+        ) : (
+          <div className="result">
+            <div className="result-title">
+              <img src={assets.user_icon} alt="" />
+              <p>{prevPrompt}</p> {/* Display the stored previous prompt */}
+            </div>
+            <div className="result-data">
+              <img src={assets.gemini_icon} alt="" />
+              {loading ? (
+                <div className="loader">
+                  <hr />
+                  <hr />
+                  <hr />
+                </div>
+              ) : (
+                <p dangerouslySetInnerHTML={{ __html: response }}></p> // Use dangerouslySetInnerHTML for formatted response
+              )}
+            </div>
+          </div>
         )}
 
         <div className="main-bottom">
@@ -111,6 +117,20 @@ const Main = () => {
       </div>
     </div>
   );
+};
+
+const formatResponse = (text) => {
+  let responseArray = text.split("**");
+  let newResponse = "";
+  for (let i = 0; i < responseArray.length; i++) {
+    if (i === 0 || i % 2 !== 0) {
+      newResponse += responseArray[i];
+    } else {
+      newResponse += "</b>" + responseArray[i] + "<b>";
+    }
+  }
+  let newResponse2=newResponse.split("*").join("</br>")
+  return newResponse2;
 };
 
 export default Main;
