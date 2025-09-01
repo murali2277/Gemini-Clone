@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Main.css";
 import { assets } from "../../assets/assets";
 import ai from "../../config/gemini"; // Import the configured Gemini AI instance
@@ -8,16 +8,20 @@ const Main = () => {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
   const [prevPrompt, setPrevPrompt] = useState(""); // New state for submitted prompt
+  const [displayText, setDisplayText] = useState(""); // State for typing effect
 
-  const delayPara = (index,nextWord) => {
-    
-  }
+  const delayPara = (index, nextWord) => {
+    setTimeout(() => {
+      setDisplayText((prev) => prev + nextWord);
+    }, 75 * index);
+  };
 
   const handleSubmit = async () => {
     if (!input.trim()) return;
 
     setLoading(true);
     setResponse(""); // Clear previous response
+    setDisplayText(""); // Clear display text
     setPrevPrompt(input); // Store the current input as the previous prompt
     try {
       const result = await ai.models.generateContent({
@@ -25,8 +29,7 @@ const Main = () => {
         contents: input,
       });
       const formattedText = formatResponse(result.text); // Format the response
-      console.log("Formatted Response:", formattedText); // Log the formatted response
-      setResponse(formattedText);
+      setResponse(formattedText); // Set the full response
     } catch (error) {
       console.error("Error calling Gemini API:", error);
       setResponse("Failed to get response from Gemini API.");
@@ -35,6 +38,16 @@ const Main = () => {
       setInput(""); // Clear input field
     }
   };
+
+  useEffect(() => {
+    if (response) {
+      const words = response.split(" ");
+      setDisplayText(""); // Clear previous display text before typing new response
+      for (let i = 0; i < words.length; i++) {
+        delayPara(i, words[i] + " ");
+      }
+    }
+  }, [response]);
 
   return (
     <div className="main">
@@ -85,7 +98,7 @@ const Main = () => {
                   <hr />
                 </div>
               ) : (
-                <p dangerouslySetInnerHTML={{ __html: response }}></p> // Use dangerouslySetInnerHTML for formatted response
+                <p dangerouslySetInnerHTML={{ __html: displayText }}></p> // Use dangerouslySetInnerHTML for formatted response
               )}
             </div>
           </div>
