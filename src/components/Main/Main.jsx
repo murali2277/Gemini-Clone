@@ -1,13 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import "./Main.css";
 import { assets } from "../../assets/assets";
-import ai from "../../config/gemini"; // Import the configured Gemini AI instance
+import { GeminiContext } from "../../context/GeminiContext";
 
 const Main = () => {
+  const {
+    onSent,
+    recentPrompt,
+    loading,
+    resultData,
+    sendPrompt,
+    setPrevPrompts, // Added setPrevPrompts to context
+    setRecentPrompt, // Added setRecentPrompt to context
+    setResultData, // Added setResultData to context
+    setLoading, // Added setLoading to context
+    setOnSent // Added setOnSent to context
+  } = useContext(GeminiContext);
+
   const [input, setInput] = useState("");
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [prevPrompt, setPrevPrompt] = useState(""); // New state for submitted prompt
   const [displayText, setDisplayText] = useState(""); // State for typing effect
 
   const delayPara = (index, nextWord) => {
@@ -19,35 +29,20 @@ const Main = () => {
   const handleSubmit = async () => {
     if (!input.trim()) return;
 
-    setLoading(true);
-    setResponse(""); // Clear previous response
     setDisplayText(""); // Clear display text
-    setPrevPrompt(input); // Store the current input as the previous prompt
-    try {
-      const result = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: input,
-      });
-      const formattedText = formatResponse(result.text); // Format the response
-      setResponse(formattedText); // Set the full response
-    } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      setResponse("Failed to get response from Gemini API.");
-    } finally {
-      setLoading(false);
-      setInput(""); // Clear input field
-    }
+    await sendPrompt(input);
+    setInput(""); // Clear input field
   };
 
   useEffect(() => {
-    if (response) {
-      const words = response.split(" ");
+    if (resultData) {
+      const words = resultData.split(" ");
       setDisplayText(""); // Clear previous display text before typing new response
       for (let i = 0; i < words.length; i++) {
         delayPara(i, words[i] + " ");
       }
     }
-  }, [response]);
+  }, [resultData]);
 
   return (
     <div className="main">
@@ -56,7 +51,7 @@ const Main = () => {
         <img src={assets.user_icon} alt="" />
       </div>
       <div className="main-container">
-        {!prevPrompt ? ( // Show greet and cards only if no prompt has been submitted yet
+        {!onSent ? ( // Show greet and cards only if no prompt has been submitted yet
           <>
             <div className="greet">
               <p>
@@ -87,7 +82,7 @@ const Main = () => {
           <div className="result">
             <div className="result-title">
               <img src={assets.user_icon} alt="" />
-              <p>{prevPrompt}</p> {/* Display the stored previous prompt */}
+              <p>{recentPrompt}</p> {/* Display the stored previous prompt */}
             </div>
             <div className="result-data">
               <img src={assets.gemini_icon} alt="" />
@@ -130,20 +125,6 @@ const Main = () => {
       </div>
     </div>
   );
-};
-
-const formatResponse = (text) => {
-  let responseArray = text.split("**");
-  let newResponse = "";
-  for (let i = 0; i < responseArray.length; i++) {
-    if (i === 0 || i % 2 !== 0) {
-      newResponse += responseArray[i];
-    } else {
-      newResponse += "</b>" + responseArray[i] + "<b>";
-    }
-  }
-  let newResponse2=newResponse.split("*").join("</br>")
-  return newResponse2;
 };
 
 export default Main;
