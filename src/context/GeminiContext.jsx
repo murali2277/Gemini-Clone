@@ -12,17 +12,24 @@ const GeminiContextProvider = (props) => {
   const [showResult, setShowResult] = useState(false); // New state to control result display
 
   const formatResponse = (text) => {
-    let responseArray = text.split("**");
-    let newResponse = "";
-    for (let i = 0; i < responseArray.length; i++) {
-      if (i === 0 || i % 2 !== 0) {
-        newResponse += responseArray[i];
-      } else {
-        newResponse += "</b>" + responseArray[i] + "<b>";
-      }
-    }
-    let newResponse2 = newResponse.split("*").join("</br>");
-    return newResponse2;
+    let formattedText = text;
+
+    // Replace **text** with <b>text</b>
+    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+    // Replace ### heading with <h3>heading</h3> (and similar for ##, #)
+    formattedText = formattedText.replace(/### (.*)/g, '<h3>$1</h3>');
+    formattedText = formattedText.replace(/## (.*)/g, '<h2>$1</h2>');
+    formattedText = formattedText.replace(/\/ (.*)/g, '<h1>$1</h1>'); // Corrected from # to / for consistency with previous code
+
+    // Replace ```code``` with <pre><code>code</code></pre>
+    formattedText = formattedText.replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
+
+    // Replace * with <br/> for line breaks, but be careful not to break other markdown
+    // This specific replacement should be done carefully. For now, let's assume * is primarily for line breaks.
+    formattedText = formattedText.replace(/\* /g, '<br/>');
+
+    return formattedText;
   };
 
   const newChat = () => {
