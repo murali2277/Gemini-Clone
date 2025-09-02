@@ -5,6 +5,9 @@ This is a simple web application that acts as a clone of the Google Gemini inter
 ## Features
 
 *   **Interactive Chat Interface**: A clean and simple UI for sending prompts and viewing responses.
+*   **Dynamic Typing Effect**: AI responses are displayed with a realistic typing animation for an enhanced user experience.
+*   **Persistent Chat History**: Previous prompts and their responses are stored and accessible via a sidebar, allowing users to revisit past conversations.
+*   **New Chat Functionality**: Easily start a fresh conversation with the AI.
 *   **Direct Gemini API Integration**: The frontend directly communicates with the Google Gemini API.
 *   **Response Formatting**: The application formats the Gemini response to display bold text and line breaks.
 
