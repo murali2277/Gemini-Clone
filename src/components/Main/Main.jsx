@@ -27,7 +27,7 @@ const Main = () => {
       setDisplayText((prev) => prev + nextWord);
     }, 75 * index);
   };
-
+  
   const handleSubmit = async () => {
     if (!input.trim()) return;
 

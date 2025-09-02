@@ -5,7 +5,7 @@ import { GeminiContext } from "../../context/GeminiContext";
 
 const Sidebar = () => {
   const [extended, setExtended] = useState(false);
-  const { onSent, prevPrompts, setRecentPrompt, setResultData, setShowResult } = useContext(GeminiContext);
+  const { onSent, prevPrompts, setRecentPrompt, setResultData, setShowResult, newChat } = useContext(GeminiContext);
 
   const loadPrompt = async (item) => {
     setRecentPrompt(item.prompt);
@@ -13,16 +13,11 @@ const Sidebar = () => {
     setShowResult(true);
   }
 
-  const handleNewChat = () => {
-    setShowResult(false);
-    onSent(false); // Reset onSent to false for a new chat
-  }
-
   return (
     <div className={`sidebar ${extended ? 'extended' : ''}`}>
       <div className="top">
         <img onClick={() => setExtended((prev) => !prev)} className="menu" src={assets.menu_icon} alt="" />
-        <div className="new-chat">
+        <div onClick={newChat} className="new-chat">
           <img src={assets.plus_icon} alt="" />
           {extended ? <p>New Chat</p> : null}
         </div>
