@@ -6,6 +6,12 @@
     background-color: #f0f4f9;
     padding: 25px 15px;
     padding-right: 3px;
+    transition: 0.2s;
+    width: 75px; /* Default width when not extended */
+}
+
+.sidebar.extended {
+    width: 250px; /* Expanded width */
 }
 
 .sidebar img{
@@ -59,4 +65,4 @@
 .sidebar .bottom{
     display: flex;
     flex-direction: column;
-}j
+}

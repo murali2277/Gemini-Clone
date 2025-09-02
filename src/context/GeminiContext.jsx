@@ -9,6 +9,7 @@ const GeminiContextProvider = (props) => {
   const [recentPrompt, setRecentPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [resultData, setResultData] = useState("");
+  const [showResult, setShowResult] = useState(false); // New state to control result display
 
   const formatResponse = (text) => {
     let responseArray = text.split("**");
@@ -24,25 +25,33 @@ const GeminiContextProvider = (props) => {
     return newResponse2;
   };
 
+  const newChat = () => {
+    setLoading(false);
+    setOnSent(false);
+    setShowResult(false);
+  }
+
   const sendPrompt = async (prompt) => {
     setResultData("");
     setLoading(true);
     setOnSent(true);
+    setShowResult(true); // Show result area when prompt is sent
     setRecentPrompt(prompt);
-    setPrevPrompts(prev => [...prev, prompt]); // Add current prompt to history
 
+    let response;
     try {
       const result = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: prompt,
       });
-      const formattedText = formatResponse(result.text);
-      setResultData(formattedText);
+      response = formatResponse(result.text);
     } catch (error) {
       console.error("Error calling Gemini API:", error);
-      setResultData("Failed to get response from Gemini API.");
+      response = "Failed to get response from Gemini API.";
     } finally {
+      setResultData(response);
       setLoading(false);
+      setPrevPrompts(prev => [...prev, { prompt: prompt, response: response }]); // Store both prompt and response
     }
   };
 
@@ -58,6 +67,9 @@ const GeminiContextProvider = (props) => {
     resultData,
     setResultData,
     sendPrompt,
+    showResult,
+    setShowResult,
+    newChat
   };
 
   return (

@@ -14,7 +14,9 @@ const Main = () => {
     setRecentPrompt, // Added setRecentPrompt to context
     setResultData, // Added setResultData to context
     setLoading, // Added setLoading to context
-    setOnSent // Added setOnSent to context
+    setOnSent,
+    showResult, // Added showResult to context
+    newChat // Added newChat to context
   } = useContext(GeminiContext);
 
   const [input, setInput] = useState("");
@@ -51,7 +53,7 @@ const Main = () => {
         <img src={assets.user_icon} alt="" />
       </div>
       <div className="main-container">
-        {!onSent ? ( // Show greet and cards only if no prompt has been submitted yet
+        {!showResult ? ( // Use showResult to conditionally render greet or result
           <>
             <div className="greet">
               <p>
