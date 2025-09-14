@@ -50,6 +50,26 @@ This is a simple web application that acts as a clone of the Google Gemini inter
 
 2.  Open your browser and navigate to the URL provided by Vite (usually `http://localhost:5173/` or a similar port).
 
+## Docker Usage
+
+You can run Gemini Clone in a Docker container:
+
+1. **Build the Docker image:**
+    ```bash
+    docker build -t gemini-clone .
+    ```
+
+2. **Run the Docker container:**
+    ```bash
+    docker run -p 5173:5173 gemini-clone
+    ```
+
+3. Open your browser at [http://localhost:5173](http://localhost:5173).
+
+**Note:**  
+The dev script uses `vite --host` so the server binds to `0.0.0.0` and is accessible outside the container.  
+Make sure your `.env` file is present and contains your API key before building the image.
+
 ## Security Note
 
 This project directly calls the Google Gemini API from the frontend. This means your `VITE_GEMINI_API_KEY` is exposed in the client-side code. This is **not recommended for production applications** as it poses a significant security risk. For production environments, it is highly recommended to use a backend server to proxy requests to the Gemini API, keeping your API key secure on the server-side.
