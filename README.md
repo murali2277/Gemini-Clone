@@ -72,4 +72,4 @@ Make sure your `.env` file is present and contains your API key before building 
 
 ## Security Note
 
-This project directly calls the Google Gemini API from the frontend. This means your `VITE_GEMINI_API_KEY` is exposed in the client-side code. This is **not recommended for production applications** as it poses a significant security risk. For production environments, it is highly recommended to use a backend server to proxy requests to the Gemini API, keeping your API key secure on the server-side
+This project directly calls the Google Gemini API from the frontend. This means your `VITE_GEMINI_API_KEY` is exposed in the client-side code. This is **not recommended for production applications** as it poses a significant security risk. For production environments, it is highly recommended to use a backend server to proxy requests to the Gemini API, keeping your API key secure on the server-side.
